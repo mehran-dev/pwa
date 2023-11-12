@@ -215,7 +215,7 @@ function updateUI(data) {
 }
 
 var networkDataReceived = false;
-// 'https://pwagram-99adf.firebaseio.com/posts.json';
+
 fetch("http://localhost:8585/getPosts")
   .then(function (res) {
     return res.json();

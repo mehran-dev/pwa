@@ -1,8 +1,10 @@
 importScripts("/src/js/idb.js");
 importScripts("/src/js/utility.js");
 
-var CACHE_STATIC_NAME = "static-v48";
-var CACHE_DYNAMIC_NAME = "dynamic-v8";
+const CACHE_VERSION_NUMBER = 6;
+
+var CACHE_STATIC_NAME = `static-v${CACHE_VERSION_NUMBER}`;
+var CACHE_DYNAMIC_NAME = `dynamic-v${CACHE_VERSION_NUMBER}`;
 var STATIC_FILES = [
   "/",
   "/index.html",
@@ -62,7 +64,7 @@ function isInArray(string, array) {
 }
 
 self.addEventListener("fetch", function (event) {
-  var url = "https://pwagram-99adf.firebaseio.com/posts";
+  var url = "http://localhost:8585/getPosts";
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(
       fetch(event.request).then(function (res) {
@@ -125,7 +127,7 @@ self.addEventListener("sync", function (event) {
 
           fetch(
             "http:localhost:8585/addPost",
-            //"https://us-central1-pwagram-99adf.cloudfunctions.net/storePostData",
+
             {
               method: "POST",
               body: postData,
