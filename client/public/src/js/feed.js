@@ -303,3 +303,11 @@ form.addEventListener("submit", function (event) {
     sendData();
   }
 });
+
+setInterval(() => {
+  navigator.serviceWorker.ready.then(function (sw) {
+    console.log("FORCE SYNC ");
+
+    sw.sync.register("sync-new-posts");
+  });
+}, 20000);

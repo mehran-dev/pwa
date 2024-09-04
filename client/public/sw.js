@@ -1,7 +1,7 @@
 importScripts("/src/js/idb.js");
 importScripts("/src/js/utility.js");
 
-const version = 57;
+const version = 60;
 
 var CACHE_STATIC_NAME = "static-v" + version;
 var CACHE_DYNAMIC_NAME = "dynamic-v" + version;
@@ -117,13 +117,15 @@ self.addEventListener("sync", function (event) {
     event.waitUntil(
       readAllData("sync-posts").then(function (data) {
         for (var dt of data) {
+          console.log("dt", dt);
+          //lojop
           var postData = new FormData();
           postData.append("id", dt.id);
           postData.append("title", dt.title);
           postData.append("location", dt.location);
           postData.append("rawLocationLat", dt.rawLocation.lat);
           postData.append("rawLocationLng", dt.rawLocation.lng);
-          postData.append("file", dt.picture, dt.id + ".png");
+          postData.append("file", dt?.picture, dt.id + ".png");
 
           fetch("http://localhost:8585/addPost", {
             method: "POST",

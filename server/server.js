@@ -121,7 +121,7 @@ app.post("/addPost", upload.single("file"), (req, res) => {
     image: imagePath,
   };
 
-  const data = readPosts();
+  const data = readData();
   const { posts } = data;
   posts.push(newPost);
   writeData({ ...data, ...posts });
