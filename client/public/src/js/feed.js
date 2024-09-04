@@ -304,6 +304,32 @@ form.addEventListener("submit", function (event) {
   }
 });
 
+navigator.serviceWorker.addEventListener("message", (event) => {
+  if (event.data.type === "SYNC_COMPLETE") {
+    // Refetch all posts or update the state
+    fetchPostsAndUpdateUI(); // Your function to refetch posts
+  }
+});
+
+fetchPostsAndUpdateUI = () => {
+  fetch("http://localhost:8585/getPosts")
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
+      networkDataReceived = true;
+      console.log("From web", data);
+      var dataArray = [];
+      for (var key in data) {
+        dataArray.push(data[key]);
+      }
+      updateUI(dataArray);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 setInterval(() => {
   navigator.serviceWorker.ready.then(function (sw) {
     console.log("FORCE SYNC ");

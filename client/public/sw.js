@@ -136,6 +136,13 @@ self.addEventListener("sync", function (event) {
               if (res.ok) {
                 res.json().then(function (resData) {
                   deleteItemFromData("sync-posts", resData.id);
+
+                  // Inform the client to refetch posts
+                  self.clients.matchAll().then((clients) => {
+                    clients.forEach((client) =>
+                      client.postMessage({ type: "SYNC_COMPLETE" })
+                    );
+                  });
                 });
               }
             })
