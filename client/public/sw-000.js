@@ -81,7 +81,7 @@ self.addEventListener("fetch", function (event) {
         return res;
       })
     );
-  } else if (isInArray(event.request.url, STATIC_FILES) && false) {
+  } else if (isInArray(event.request.url, STATIC_FILES)) {
     event.respondWith(caches.match(event.request));
   } else {
     event.respondWith(

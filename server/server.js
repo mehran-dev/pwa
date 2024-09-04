@@ -2,12 +2,14 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 8585;
 
 // Middleware for parsing JSON data in requests
 app.use(express.json());
+app.use(cors());
 
 // Set up Multer for handling file uploads
 const storage = multer.diskStorage({

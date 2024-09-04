@@ -261,7 +261,7 @@ function sendData() {
   )
     .then(function (res) {
       console.log("Sent data", res);
-      updateUI();
+      updateUI([]);
     })
     .catch((err) => {
       console.log(err);
@@ -272,7 +272,7 @@ form.addEventListener("submit", function (event) {
   event.preventDefault();
 
   if (titleInput.value.trim() === "" || locationInput.value.trim() === "") {
-    alert("Please enter valid data!");
+    alert("Please enter valid 3 data!");
     return;
   }
 
