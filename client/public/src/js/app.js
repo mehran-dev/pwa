@@ -25,6 +25,24 @@ window.addEventListener("beforeinstallprompt", function (event) {
   return false;
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Function to toggle grayscale based on online status
+  function updateGrayscale() {
+    if (!navigator.onLine) {
+      document.body.setAttribute("style", "filter: grayscale(100%);");
+    } else {
+      document.body.setAttribute("style", "filter: none;");
+    }
+  }
+
+  // Initial check when the page loads
+  updateGrayscale();
+
+  // Event listeners for online and offline events
+  window.addEventListener("online", updateGrayscale);
+  window.addEventListener("offline", updateGrayscale);
+});
+
 function displayConfirmNotification() {
   if ("serviceWorker" in navigator) {
     var options = {
