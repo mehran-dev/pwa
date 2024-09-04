@@ -252,13 +252,10 @@ function sendData() {
   postData.append("rawLocationLng", fetchedLocation.lng);
   postData.append("file", picture, id + ".png");
 
-  fetch(
-    "http://localhost:8585/addPost", //  "https://us-central1-pwagram-99adf.cloudfunctions.net/storePostData"
-    {
-      method: "POST",
-      body: postData,
-    }
-  )
+  fetch("http://localhost:8585/addPost", {
+    method: "POST",
+    body: postData,
+  })
     .then(function (res) {
       console.log("Sent data", res);
       updateUI([]);
@@ -289,6 +286,8 @@ form.addEventListener("submit", function (event) {
       };
       writeData("sync-posts", post)
         .then(function () {
+          console.log("REGISTERING >>>>> ");
+
           return sw.sync.register("sync-new-posts");
         })
         .then(function () {

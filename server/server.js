@@ -3,6 +3,8 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
+const webpush = require("web-push");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 8585;
@@ -26,8 +28,7 @@ const upload = multer({ storage });
 const postsFilePath = "posts.json";
 const imageStoragePath = "uploads";
 
-// Define a function to read posts from the JSON file
-function readPosts() {
+function readData() {
   try {
     const data = fs.readFileSync(postsFilePath);
     return JSON.parse(data);
@@ -37,16 +38,15 @@ function readPosts() {
 }
 
 // Define a function to write posts to the JSON file
-function writePosts(posts) {
+function writeData(posts) {
   fs.writeFileSync(postsFilePath, JSON.stringify(posts, null, 2));
 }
 
 // Get all posts
 app.get("/getPosts", (req, res) => {
-  const posts = readPosts();
+  const { posts } = readData();
   const postsWithImages = posts.map((post) => {
     if (post.image) {
-      //http://example.com/uploads/image.jpg
       post.image = `${req.protocol}://${req.get("host")}/${"uploads"}/${
         post.image
       }`;
@@ -55,6 +55,52 @@ app.get("/getPosts", (req, res) => {
   });
 
   res.json(postsWithImages);
+});
+
+app.post("/subscriptions", (req, res) => {
+  console.log(req.body);
+  const data = readData();
+  const { subscriptions } = data;
+
+  subscriptions.push(req.body);
+  writeData({ ...data, subscriptions: [...subscriptions] });
+  res.status(201).json({ ok: true });
+});
+app.post("/notify-all", (req, res) => {
+  console.log("KEYs", process.env.publicKey);
+
+  const data = readData();
+  const { subscriptions } = data;
+
+  // webpush.setGCMAPIKey("<Your GCM API Key Here>");
+  webpush.setVapidDetails(
+    "mailto:example@yourdomain.org",
+    process.env.publicKey,
+    process.env.privateKey
+  );
+
+  subscriptions.forEach((sub) => {
+    // This is the same output of calling JSON.stringify on a PushSubscription
+    const pushSubscription = {
+      endpoint: sub.endpoint,
+      keys: {
+        auth: sub.keys.auth,
+        p256dh: sub.keys.p256dh,
+      },
+    };
+
+    webpush.sendNotification(
+      pushSubscription,
+
+      JSON.stringify({
+        title: "New!",
+        content: "Something new happened!",
+        openUrl: "/",
+      })
+    );
+  });
+
+  res.status(200).json({ "notified-count": subscriptions.length });
 });
 
 // Add a new post
@@ -75,11 +121,12 @@ app.post("/addPost", upload.single("file"), (req, res) => {
     image: imagePath,
   };
 
-  const posts = readPosts();
+  const data = readPosts();
+  const { posts } = data;
   posts.push(newPost);
-  writePosts(posts);
+  writeData({ ...data, ...posts });
 
-  res.json({ message: "Post added successfully" });
+  res.json({ message: "Post added successfully", id });
 });
 
 // Serve uploaded images
